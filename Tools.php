@@ -354,6 +354,55 @@ class Tools
         }
         return $isholiday;
     }
+
+    /**
+     * 渲染为标准JSON格式
+     * @param  mixed $data 如果为数组或对象,
+     *                         如果只有2个值, 且第一个为数字第二个字符串将分别作为code和msg,
+     *                         否则将除code和msg的值赋值给data
+     *                     如果为整数作为code
+     *                     如果为字符串作为msg
+     * @param  array $param 将参数附加到一维数组
+     * @return json  返回必带code和msg可能带data的json标准字符串
+     */
+    public function renderJson($data, $param = [])
+    {
+
+        $json = is_array($param) ? $param : [];
+
+        if (is_object($data)) {
+            $data = self::objToArr($data);
+        }
+        if (is_array($data)) {
+            if (count($data) == 2 && is_numeric($data[0]) && is_string($data[1])) {
+                $json['code'] = $data[0];
+                $json['msg'] = $data[1];
+                unset($data);
+            }
+
+            if (isset($data['code'])) {
+                $json['code'] = $data['code'];
+                unset($data['code']);
+            }
+
+            if (isset($data['msg'])) {
+                $json['msg'] = $data['msg'];
+                unset($data['msg']);
+            }
+
+            if (!empty($data)) {
+                $json['data'] = $data;
+            }
+        } elseif (is_int($data)) {
+            $json['code'] = $data;
+        } elseif (is_string($data)) {
+            $json['msg'] = $data;
+        }
+
+        $json['code'] = isset($json['code']) ? $json['code'] : 0;
+        $json['msg'] = isset($json['msg']) ? $json['msg'] : 'ok';
+        echo json_encode($json);
+    }
 }
 
 
