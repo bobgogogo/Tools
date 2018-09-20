@@ -11,7 +11,7 @@ class Tools
 	 */
 	public static function Upper2Under($string){
 		$string = preg_replace_callback("/[A-Z]/", function($match){
-			    return "/".strtolower($match[0]);
+			    return "_".strtolower($match[0]);
 			}, $string);
 		return $string;
 	}
